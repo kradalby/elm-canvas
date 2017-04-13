@@ -5,6 +5,10 @@ module Canvas.Events
         , onMouseMove
         , onClick
         , onDoubleClick
+        , onTouchStart
+        , onTouchEnd
+        , onTouchCancel
+        , onTouchMove
         )
 
 {-| These functions are just like the `Html.Events` functions `onMouseDown`, `onMouseUp`, etc, except that they pass along a `Point`, representing exactly where on the canvas the mouse activity occured. They can be used on other elements too, like divs.
@@ -13,7 +17,7 @@ module Canvas.Events
 -}
 
 import Html exposing (Attribute)
-import Html.Events exposing (on)
+import Html.Events exposing (on, onWithOptions, Options)
 import Canvas.Point exposing (Point)
 import Canvas.Point as Point
 import Json.Decode as Json
@@ -70,6 +74,49 @@ onClick message =
 onDoubleClick : (Point -> msg) -> Attribute msg
 onDoubleClick message =
     on "dblclick" <|
+        Json.map
+            (positionInCanvas >> message)
+            positionDecoder
+
+
+touchOptions : Options
+touchOptions =
+    { stopPropagation = False
+    , preventDefault = True
+    }
+
+
+{-| -}
+onTouchStart : (Point -> msg) -> Attribute msg
+onTouchStart message =
+    onWithOptions "touchstart" touchOptions <|
+        Json.map
+            (positionInCanvas >> message)
+            positionDecoder
+
+
+{-| -}
+onTouchEnd : (Point -> msg) -> Attribute msg
+onTouchEnd message =
+    onWithOptions "touchend" touchOptions <|
+        Json.map
+            (positionInCanvas >> message)
+            positionDecoder
+
+
+{-| -}
+onTouchCancel : (Point -> msg) -> Attribute msg
+onTouchCancel message =
+    onWithOptions "touchcancel" touchOptions <|
+        Json.map
+            (positionInCanvas >> message)
+            positionDecoder
+
+
+{-| -}
+onTouchMove : (Point -> msg) -> Attribute msg
+onTouchMove message =
+    onWithOptions "touchmove" touchOptions <|
         Json.map
             (positionInCanvas >> message)
             positionDecoder
