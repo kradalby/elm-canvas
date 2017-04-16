@@ -40,7 +40,7 @@ onMouseDown message =
     on "mousedown" <|
         Json.map
             (positionInCanvas >> message)
-            positionDecoder
+            mouseEventPositionDecoder
 
 
 {-| -}
@@ -49,7 +49,7 @@ onMouseUp message =
     on "mouseup" <|
         Json.map
             (positionInCanvas >> message)
-            positionDecoder
+            mouseEventPositionDecoder
 
 
 {-| -}
@@ -58,7 +58,7 @@ onMouseMove message =
     on "mousemove" <|
         Json.map
             (positionInCanvas >> message)
-            positionDecoder
+            mouseEventPositionDecoder
 
 
 {-| -}
@@ -67,7 +67,7 @@ onClick message =
     on "click" <|
         Json.map
             (positionInCanvas >> message)
-            positionDecoder
+            mouseEventPositionDecoder
 
 
 {-| -}
@@ -76,12 +76,12 @@ onDoubleClick message =
     on "dblclick" <|
         Json.map
             (positionInCanvas >> message)
-            positionDecoder
+            mouseEventPositionDecoder
 
 
 touchOptions : Options
 touchOptions =
-    { stopPropagation = False
+    { stopPropagation = True
     , preventDefault = True
     }
 
@@ -92,7 +92,7 @@ onTouchStart message =
     onWithOptions "touchstart" touchOptions <|
         Json.map
             (positionInCanvas >> message)
-            positionDecoder
+            touchEventPositionDecoder
 
 
 {-| -}
@@ -101,7 +101,7 @@ onTouchEnd message =
     onWithOptions "touchend" touchOptions <|
         Json.map
             (positionInCanvas >> message)
-            positionDecoder
+            touchEventPositionDecoder
 
 
 {-| -}
@@ -110,7 +110,7 @@ onTouchCancel message =
     onWithOptions "touchcancel" touchOptions <|
         Json.map
             (positionInCanvas >> message)
-            positionDecoder
+            touchEventPositionDecoder
 
 
 {-| -}
@@ -119,7 +119,7 @@ onTouchMove message =
     onWithOptions "touchmove" touchOptions <|
         Json.map
             (positionInCanvas >> message)
-            positionDecoder
+            touchEventPositionDecoder
 
 
 positionInCanvas : ( ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) ) -> Point
@@ -140,10 +140,23 @@ positionInCanvas ( client, offset, body, documentElement ) =
         Point.fromFloats ( (cx + bx + dx) - ox, (cy + by + dy) - oy )
 
 
-positionDecoder : Json.Decoder ( ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) )
-positionDecoder =
+mouseEventPositionDecoder : Json.Decoder ( ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) )
+mouseEventPositionDecoder =
     Json.map4 (,,,)
         (toTuple [ "clientX" ] [ "clientY" ])
+        (toTuple [ "target", "offsetLeft" ] [ "target", "offsetTop" ])
+        (toTuple [ "view", "document", "body", "scrollLeft" ] [ "view", "document", "body", "scrollTop" ])
+        (toTuple [ "view", "document", "documentElement", "scrollLeft" ] [ "view", "document", "documentElement", "scrollTop" ])
+
+
+touchEventPositionDecoder : Json.Decoder ( ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) )
+touchEventPositionDecoder =
+    Json.map4 (,,,)
+        -- Select the first Touch and get clientX and clientY
+        (Json.map2 (,)
+            (Json.field "touches" <| Json.index 0 <| Json.field "clientX" <| Json.float)
+            (Json.field "touches" <| Json.index 0 <| Json.field "clientY" <| Json.float)
+        )
         (toTuple [ "target", "offsetLeft" ] [ "target", "offsetTop" ])
         (toTuple [ "view", "document", "body", "scrollLeft" ] [ "view", "document", "body", "scrollTop" ])
         (toTuple [ "view", "document", "documentElement", "scrollLeft" ] [ "view", "document", "documentElement", "scrollTop" ])
