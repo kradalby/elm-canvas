@@ -89,7 +89,9 @@ touchOptions =
 {-| -}
 onTouchStart : (Point -> msg) -> Attribute msg
 onTouchStart message =
-    onWithOptions "touchstart" touchOptions <|
+    onWithOptions "touchstart"
+        touchOptions
+    <|
         Json.map
             (positionInCanvas >> message)
             touchEventPositionDecoder
@@ -153,10 +155,7 @@ touchEventPositionDecoder : Json.Decoder ( ( Float, Float ), ( Float, Float ), (
 touchEventPositionDecoder =
     Json.map4 (,,,)
         -- Select the first Touch and get clientX and clientY
-        (Json.map2 (,)
-            (Json.field "touches" <| Json.index 0 <| Json.field "clientX" <| Json.float)
-            (Json.field "touches" <| Json.index 0 <| Json.field "clientY" <| Json.float)
-        )
+        (toTuple [ "changedTouches", "0", "clientX" ] [ "changedTouches", "0", "clientY" ])
         (toTuple [ "target", "offsetLeft" ] [ "target", "offsetTop" ])
         (toTuple [ "view", "document", "body", "scrollLeft" ] [ "view", "document", "body", "scrollTop" ])
         (toTuple [ "view", "document", "documentElement", "scrollLeft" ] [ "view", "document", "documentElement", "scrollTop" ])
