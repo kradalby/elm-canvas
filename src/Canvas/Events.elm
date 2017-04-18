@@ -79,46 +79,37 @@ onDoubleClick message =
             mouseEventPositionDecoder
 
 
-touchOptions : Options
-touchOptions =
-    { stopPropagation = True
-    , preventDefault = True
-    }
-
-
 {-| -}
-onTouchStart : (Point -> msg) -> Attribute msg
-onTouchStart message =
-    onWithOptions "touchstart"
-        touchOptions
-    <|
+onTouchStart : Options -> (Point -> msg) -> Attribute msg
+onTouchStart options message =
+    onWithOptions "touchstart" options <|
         Json.map
             (positionInCanvas >> message)
             touchEventPositionDecoder
 
 
 {-| -}
-onTouchEnd : (Point -> msg) -> Attribute msg
-onTouchEnd message =
-    onWithOptions "touchend" touchOptions <|
+onTouchEnd : Options -> (Point -> msg) -> Attribute msg
+onTouchEnd options message =
+    onWithOptions "touchend" options <|
         Json.map
             (positionInCanvas >> message)
             touchEventPositionDecoder
 
 
 {-| -}
-onTouchCancel : (Point -> msg) -> Attribute msg
-onTouchCancel message =
-    onWithOptions "touchcancel" touchOptions <|
+onTouchCancel : Options -> (Point -> msg) -> Attribute msg
+onTouchCancel options message =
+    onWithOptions "touchcancel" options <|
         Json.map
             (positionInCanvas >> message)
             touchEventPositionDecoder
 
 
 {-| -}
-onTouchMove : (Point -> msg) -> Attribute msg
-onTouchMove message =
-    onWithOptions "touchmove" touchOptions <|
+onTouchMove : Options -> (Point -> msg) -> Attribute msg
+onTouchMove options message =
+    onWithOptions "touchmove" options <|
         Json.map
             (positionInCanvas >> message)
             touchEventPositionDecoder
