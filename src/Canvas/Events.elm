@@ -5,15 +5,20 @@ module Canvas.Events
         , onMouseMove
         , onClick
         , onDoubleClick
-        , onTouchStart
-        , onTouchEnd
-        , onTouchCancel
-        , onTouchMove
+        , onSingleTouchStart
+        , onSingleTouchEnd
+        , onSingleTouchCancel
+        , onSingleTouchMove
+        , onMultiTouchStart
+        , onMultiTouchEnd
+        , onMultiTouchCancel
+        , onMultiTouchMove
         )
 
 {-| These functions are just like the `Html.Events` functions `onMouseDown`, `onMouseUp`, etc, except that they pass along a `Point`, representing exactly where on the canvas the mouse activity occured. They can be used on other elements too, like divs.
 
 @docs onMouseDown, onMouseUp, onMouseMove, onClick, onDoubleClick
+
 -}
 
 import Html exposing (Attribute)
@@ -34,6 +39,7 @@ import Json.Decode as Json
     case message of
         CanvasClick point ->
             -- ..
+
 -}
 onMouseDown : (Point -> msg) -> Attribute msg
 onMouseDown message =
@@ -80,39 +86,75 @@ onDoubleClick message =
 
 
 {-| -}
-onTouchStart : Options -> (Point -> msg) -> Attribute msg
-onTouchStart options message =
+onSingleTouchStart : Options -> (Point -> msg) -> Attribute msg
+onSingleTouchStart options message =
     onWithOptions "touchstart" options <|
         Json.map
             (positionInCanvas >> message)
-            touchEventPositionDecoder
+            singleTouchEventPositionDecoder
 
 
 {-| -}
-onTouchEnd : Options -> (Point -> msg) -> Attribute msg
-onTouchEnd options message =
+onSingleTouchEnd : Options -> (Point -> msg) -> Attribute msg
+onSingleTouchEnd options message =
     onWithOptions "touchend" options <|
         Json.map
             (positionInCanvas >> message)
-            touchEventPositionDecoder
+            singleTouchEventPositionDecoder
 
 
 {-| -}
-onTouchCancel : Options -> (Point -> msg) -> Attribute msg
-onTouchCancel options message =
+onSingleTouchCancel : Options -> (Point -> msg) -> Attribute msg
+onSingleTouchCancel options message =
     onWithOptions "touchcancel" options <|
         Json.map
             (positionInCanvas >> message)
-            touchEventPositionDecoder
+            singleTouchEventPositionDecoder
 
 
 {-| -}
-onTouchMove : Options -> (Point -> msg) -> Attribute msg
-onTouchMove options message =
+onSingleTouchMove : Options -> (Point -> msg) -> Attribute msg
+onSingleTouchMove options message =
     onWithOptions "touchmove" options <|
         Json.map
             (positionInCanvas >> message)
-            touchEventPositionDecoder
+            singleTouchEventPositionDecoder
+
+
+{-| -}
+onMultiTouchStart : Options -> (List Point -> msg) -> Attribute msg
+onMultiTouchStart options message =
+    onWithOptions "touchstart" options <|
+        Json.map
+            (positionsInCanvas >> message)
+            multiTouchEventPositionDecoder
+
+
+{-| -}
+onMultiTouchEnd : Options -> (List Point -> msg) -> Attribute msg
+onMultiTouchEnd options message =
+    onWithOptions "touchend" options <|
+        Json.map
+            (positionsInCanvas >> message)
+            multiTouchEventPositionDecoder
+
+
+{-| -}
+onMultiTouchCancel : Options -> (List Point -> msg) -> Attribute msg
+onMultiTouchCancel options message =
+    onWithOptions "touchcancel" options <|
+        Json.map
+            (positionsInCanvas >> message)
+            multiTouchEventPositionDecoder
+
+
+{-| -}
+onMultiTouchMove : Options -> (List Point -> msg) -> Attribute msg
+onMultiTouchMove options message =
+    onWithOptions "touchmove" options <|
+        Json.map
+            (positionsInCanvas >> message)
+            multiTouchEventPositionDecoder
 
 
 positionInCanvas : ( ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) ) -> Point
@@ -133,6 +175,11 @@ positionInCanvas ( client, offset, body, documentElement ) =
         Point.fromFloats ( (cx + bx + dx) - ox, (cy + by + dy) - oy )
 
 
+positionsInCanvas : ( List ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) ) -> List Point
+positionsInCanvas ( clients, offset, body, documentElement ) =
+    List.map (\client -> positionInCanvas ( client, offset, body, documentElement )) clients
+
+
 mouseEventPositionDecoder : Json.Decoder ( ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) )
 mouseEventPositionDecoder =
     Json.map4 (,,,)
@@ -142,11 +189,25 @@ mouseEventPositionDecoder =
         (toTuple [ "view", "document", "documentElement", "scrollLeft" ] [ "view", "document", "documentElement", "scrollTop" ])
 
 
-touchEventPositionDecoder : Json.Decoder ( ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) )
-touchEventPositionDecoder =
+singleTouchEventPositionDecoder : Json.Decoder ( ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) )
+singleTouchEventPositionDecoder =
     Json.map4 (,,,)
         -- Select the first Touch and get clientX and clientY
         (toTuple [ "changedTouches", "0", "clientX" ] [ "changedTouches", "0", "clientY" ])
+        (toTuple [ "target", "offsetLeft" ] [ "target", "offsetTop" ])
+        (toTuple [ "view", "document", "body", "scrollLeft" ] [ "view", "document", "body", "scrollTop" ])
+        (toTuple [ "view", "document", "documentElement", "scrollLeft" ] [ "view", "document", "documentElement", "scrollTop" ])
+
+
+multiTouchEventPositionDecoder : Json.Decoder ( List ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) )
+multiTouchEventPositionDecoder =
+    Json.map4 (,,,)
+        (Json.field
+            "changedTouches"
+            (Json.list
+                (toTuple [ "clientX" ] [ "clientY" ])
+            )
+        )
         (toTuple [ "target", "offsetLeft" ] [ "target", "offsetTop" ])
         (toTuple [ "view", "document", "body", "scrollLeft" ] [ "view", "document", "body", "scrollTop" ])
         (toTuple [ "view", "document", "documentElement", "scrollLeft" ] [ "view", "document", "documentElement", "scrollTop" ])
