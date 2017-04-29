@@ -1,9 +1,9 @@
-/*global _elm_lang$core$Native_List */
-/*global _elm_lang$core$Color$toRgb */
-/*global _elm_lang$core$Native_Scheduler */
-/*global _elm_lang$virtual_dom$Native_VirtualDom */
+/* global _elm_lang$core$Native_List */
+/* global _elm_lang$core$Color$toRgb */
+/* global _elm_lang$core$Native_Scheduler */
+/* global _elm_lang$virtual_dom$Native_VirtualDom */
 
-var _elm_canvas$elm_canvas$Native_Canvas = function () {  // eslint-disable-line no-unused-vars
+var _kradalby$enigma$Native_Canvas = (function () {  // eslint-disable-line no-unused-vars
 
 
   function LOG(msg) { // eslint-disable-line no-unused-vars
@@ -73,330 +73,330 @@ var _elm_canvas$elm_canvas$Native_Canvas = function () {  // eslint-disable-line
   }
 
 
-  function handleDrawOp (ctx, drawOp) {
+  function handleDrawOp(ctx, drawOp) {
     var point, point1, size, color;
 
     switch (drawOp.ctor) {
-    case "Font" :
+      case "Font":
 
-      ctx.font = drawOp._0;
-      break;
+        ctx.font = drawOp._0;
+        break;
 
-    case "Arc" :
+      case "Arc":
 
-      point = drawOp._0;
+        point = drawOp._0;
 
-      ctx.arc(point._0, point._1, drawOp._1, drawOp._2, drawOp._3);
-      break;
+        ctx.arc(point._0, point._1, drawOp._1, drawOp._2, drawOp._3);
+        break;
 
-    case "ArcTo" :
+      case "ArcTo":
 
-      point = drawOp._0;
-      point1 = drawOp._1;
+        point = drawOp._0;
+        point1 = drawOp._1;
 
-      ctx.arcTo(point._0, point._1, point1._0, point1._1, drawOp._2);
-      break;
+        ctx.arcTo(point._0, point._1, point1._0, point1._1, drawOp._2);
+        break;
 
-    case "StrokeText" :
+      case "StrokeText":
 
-      point = drawOp._1;
+        point = drawOp._1;
 
-      ctx.strokeText(drawOp._0, point._0, point._1);
-      break;
+        ctx.strokeText(drawOp._0, point._0, point._1);
+        break;
 
-    case "FillText" :
+      case "FillText":
 
-      point = drawOp._1;
+        point = drawOp._1;
 
-      ctx.fillText(drawOp._0, point._0, point._1);
-      break;
+        ctx.fillText(drawOp._0, point._0, point._1);
+        break;
 
-    case "GlobalCompositionOp" :
+      case "GlobalCompositionOp":
 
-      ctx.globalCompositeOperation = drawOp._0;
-      break;
+        ctx.globalCompositeOperation = drawOp._0;
+        break;
 
-    case "LineCap" :
+      case "LineCap":
 
-      ctx.lineCap = drawOp._0;
-      break;
+        ctx.lineCap = drawOp._0;
+        break;
 
-    case "LineJoin" :
-    
-      ctx.lineJoin = drawOp._0;
-      break;
+      case "LineJoin":
 
-    case "GlobalAlpha" :
+        ctx.lineJoin = drawOp._0;
+        break;
 
-      ctx.globalAlpha = drawOp._0;
-      break;
+      case "GlobalAlpha":
 
-    case "LineDashOffset" :
-    
-      ctx.lineDashOffset = drawOp._0;
-      break;
+        ctx.globalAlpha = drawOp._0;
+        break;
 
-    case "LineWidth" :
+      case "LineDashOffset":
 
-      ctx.lineWidth = drawOp._0;
-      break;
+        ctx.lineDashOffset = drawOp._0;
+        break;
 
-    case "MiterLimit" :
+      case "LineWidth":
 
-      ctx.miterLimit = drawOp._0;
-      break;
+        ctx.lineWidth = drawOp._0;
+        break;
 
-    case "LineTo" :
+      case "MiterLimit":
 
-      point = drawOp._0;
+        ctx.miterLimit = drawOp._0;
+        break;
 
-      ctx.lineTo(point._0, point._1);
-      break;
+      case "LineTo":
 
-    case "MoveTo" :
+        point = drawOp._0;
 
-      point = drawOp._0;
+        ctx.lineTo(point._0, point._1);
+        break;
 
-      ctx.moveTo(point._0, point._1);
-      break;
+      case "MoveTo":
 
-    case "ShadowBlur" :
+        point = drawOp._0;
 
-      ctx.shadowBlur = drawOp._0;
-      break;
+        ctx.moveTo(point._0, point._1);
+        break;
 
-    case "ShadowColor" :
+      case "ShadowBlur":
 
-      color = _elm_lang$core$Color$toRgb(drawOp._0);
+        ctx.shadowBlur = drawOp._0;
+        break;
 
-      ctx.shadowColor = getCssString(color);
-      break;
+      case "ShadowColor":
 
-    case "ShadowOffsetX" :
+        color = _elm_lang$core$Color$toRgb(drawOp._0);
 
-      ctx.shadowOffsetX = drawOp._0;
-      break;
+        ctx.shadowColor = getCssString(color);
+        break;
 
-    case "ShadowOffsetY" :
+      case "ShadowOffsetX":
 
-      ctx.shadowOffsetY = drawOp._0;
-      break;
+        ctx.shadowOffsetX = drawOp._0;
+        break;
 
-    case "Stroke" :
+      case "ShadowOffsetY":
 
-      ctx.stroke();
-      break;
+        ctx.shadowOffsetY = drawOp._0;
+        break;
 
-    case "BeginPath" :
+      case "Stroke":
 
-      ctx.beginPath();
-      break;
+        ctx.stroke();
+        break;
 
-    case "BezierCurveTo" :
+      case "BeginPath":
 
-      point = drawOp._0;
-      point1 = drawOp._1;
-      var point2 = drawOp._2;
+        ctx.beginPath();
+        break;
 
-      ctx.bezierCurveTo(point._0, point._1, point1._0, point1._1, point2._0, point2._1);
-      break;
+      case "BezierCurveTo":
 
-    case "QuadraticCurveTo" :
+        point = drawOp._0;
+        point1 = drawOp._1;
+        var point2 = drawOp._2;
 
-      point = drawOp._0;
-      point1 = drawOp._1;
+        ctx.bezierCurveTo(point._0, point._1, point1._0, point1._1, point2._0, point2._1);
+        break;
 
-      ctx.quadraticCurveTo(point._0, point._1, point1._0, point1._1);
-      break;
+      case "QuadraticCurveTo":
 
-    case "Rect" :
+        point = drawOp._0;
+        point1 = drawOp._1;
 
-      point = drawOp._0;
-      size = drawOp._1;
+        ctx.quadraticCurveTo(point._0, point._1, point1._0, point1._1);
+        break;
 
-      ctx.rect(point._0, point._1, size.width, size.height);
-      break;
+      case "Rect":
 
-    case "Rotate" :
+        point = drawOp._0;
+        size = drawOp._1;
 
-      ctx.rotate(drawOp._0);
-      break;
+        ctx.rect(point._0, point._1, size.width, size.height);
+        break;
 
-    case "Scale" :
+      case "Rotate":
 
-      ctx.scale(drawOp._0, drawOp._1);
-      break;
+        ctx.rotate(drawOp._0);
+        break;
 
-    case "SetLineDash" :
+      case "Scale":
 
-      ctx.setLineDash(_elm_lang$core$Native_List.toArray(drawOp._0));
-      break;
+        ctx.scale(drawOp._0, drawOp._1);
+        break;
 
-    case "SetTransform" :
+      case "SetLineDash":
 
-      ctx.setTransform(
-        drawOp._0, 
-        drawOp._1, 
-        drawOp._2,
-        drawOp._3,
-        drawOp._4,
-        drawOp._5
-      );
-      break;
+        ctx.setLineDash(_elm_lang$core$Native_List.toArray(drawOp._0));
+        break;
 
-    case "Transform" :
+      case "SetTransform":
 
-      ctx.transform(
-        drawOp._0, 
-        drawOp._1, 
-        drawOp._2,
-        drawOp._3,
-        drawOp._4,
-        drawOp._5
-      );
-      break;
-
-    case "Translate" :
-
-      point = drawOp._0;
-      ctx.translate(point._0, point._1);
-      break;
-
-    case "StrokeRect" :
-
-      point = drawOp._0;
-      size = drawOp._1;
-
-      ctx.strokeRect(point._0, point._1, size.width, size.height);
-      break;
-
-    case "StrokeStyle" :
-
-      color = _elm_lang$core$Color$toRgb(drawOp._0);
-
-      ctx.strokeStyle = getCssString(color);
-      break;
-
-    case "TextAlign" :
-
-      ctx.textAlign = drawOp._0;
-      break;
-
-    case "TextBaseline" :
-
-      ctx.textBaseline = drawOp._0;
-      break;
-
-    case "FillStyle" :
-
-      color = _elm_lang$core$Color$toRgb(drawOp._0);
-
-      ctx.fillStyle = getCssString(color);
-      break;
-
-    case "Fill" :
-
-      ctx.fill();
-      break;
-
-    case "FillRect" :
-
-      point = drawOp._0;
-      size = drawOp._1;
-
-      ctx.fillRect(point._0, point._1, size.width, size.height);
-      break;
-
-    case "PutImageData" :
-
-      point = drawOp._2;
-      size = drawOp._1;
-      var data = _elm_lang$core$Native_List.toArray(drawOp._0);
-
-      var imageData = ctx.createImageData(size.width, size.height);
-
-      for (var index = 0; index < data.length; index++) {
-        imageData.data[ index ] = data[ index ];
-      }
-
-      ctx.putImageData(imageData, point._0, point._1);
-      break;
-
-    case "ClearRect" :
-
-      point = drawOp._0;
-      size = drawOp._1;
-
-      ctx.clearRect(point._0, point._1, size.width, size.height);
-      break;
-
-    case "Clip" :
-
-      ctx.clip();
-      break;
-
-    case "ClosePath" : 
-
-      ctx.clearPath();
-      break;
-
-    case "DrawImage":
-
-      var srcCanvas = drawOp._0.canvas();
-      var drawImageOp = drawOp._1;
-      var srcPoint, srcSize, destPoint, destSize;
-
-      switch (drawOp._1.ctor) {
-      case "At":
-
-        destPoint = drawImageOp._0;
-        ctx.drawImage(
-          srcCanvas,
-          destPoint._0,
-          destPoint._1
+        ctx.setTransform(
+          drawOp._0,
+          drawOp._1,
+          drawOp._2,
+          drawOp._3,
+          drawOp._4,
+          drawOp._5
         );
         break;
 
-      case "Scaled":
+      case "Transform":
 
-        destPoint = drawImageOp._0;
-        destSize = drawImageOp._1;
-        ctx.drawImage(
-          srcCanvas,
-          destPoint._0, destPoint._1,
-          destSize.width, destSize.height
+        ctx.transform(
+          drawOp._0,
+          drawOp._1,
+          drawOp._2,
+          drawOp._3,
+          drawOp._4,
+          drawOp._5
         );
         break;
 
-      case "CropScaled":
+      case "Translate":
 
-        srcPoint = drawImageOp._0;
-        srcSize = drawImageOp._1;
-        destPoint = drawImageOp._2;
-        destSize = drawImageOp._3;
-
-        ctx.drawImage(
-          srcCanvas,
-          srcPoint._0, srcPoint._1,
-          srcSize.width, srcSize.height,
-          destPoint._0, destPoint._1,
-          destSize.width, destSize.height
-        );
+        point = drawOp._0;
+        ctx.translate(point._0, point._1);
         break;
-      }
 
-      break;
+      case "StrokeRect":
+
+        point = drawOp._0;
+        size = drawOp._1;
+
+        ctx.strokeRect(point._0, point._1, size.width, size.height);
+        break;
+
+      case "StrokeStyle":
+
+        color = _elm_lang$core$Color$toRgb(drawOp._0);
+
+        ctx.strokeStyle = getCssString(color);
+        break;
+
+      case "TextAlign":
+
+        ctx.textAlign = drawOp._0;
+        break;
+
+      case "TextBaseline":
+
+        ctx.textBaseline = drawOp._0;
+        break;
+
+      case "FillStyle":
+
+        color = _elm_lang$core$Color$toRgb(drawOp._0);
+
+        ctx.fillStyle = getCssString(color);
+        break;
+
+      case "Fill":
+
+        ctx.fill();
+        break;
+
+      case "FillRect":
+
+        point = drawOp._0;
+        size = drawOp._1;
+
+        ctx.fillRect(point._0, point._1, size.width, size.height);
+        break;
+
+      case "PutImageData":
+
+        point = drawOp._2;
+        size = drawOp._1;
+        var data = _elm_lang$core$Native_List.toArray(drawOp._0);
+
+        var imageData = ctx.createImageData(size.width, size.height);
+
+        for (var index = 0; index < data.length; index++) {
+          imageData.data[index] = data[index];
+        }
+
+        ctx.putImageData(imageData, point._0, point._1);
+        break;
+
+      case "ClearRect":
+
+        point = drawOp._0;
+        size = drawOp._1;
+
+        ctx.clearRect(point._0, point._1, size.width, size.height);
+        break;
+
+      case "Clip":
+
+        ctx.clip();
+        break;
+
+      case "ClosePath":
+
+        ctx.clearPath();
+        break;
+
+      case "DrawImage":
+
+        var srcCanvas = drawOp._0.canvas();
+        var drawImageOp = drawOp._1;
+        var srcPoint, srcSize, destPoint, destSize;
+
+        switch (drawOp._1.ctor) {
+          case "At":
+
+            destPoint = drawImageOp._0;
+            ctx.drawImage(
+              srcCanvas,
+              destPoint._0,
+              destPoint._1
+            );
+            break;
+
+          case "Scaled":
+
+            destPoint = drawImageOp._0;
+            destSize = drawImageOp._1;
+            ctx.drawImage(
+              srcCanvas,
+              destPoint._0, destPoint._1,
+              destSize.width, destSize.height
+            );
+            break;
+
+          case "CropScaled":
+
+            srcPoint = drawImageOp._0;
+            srcSize = drawImageOp._1;
+            destPoint = drawImageOp._2;
+            destSize = drawImageOp._3;
+
+            ctx.drawImage(
+              srcCanvas,
+              srcPoint._0, srcPoint._1,
+              srcSize.width, srcSize.height,
+              destPoint._0, destPoint._1,
+              destSize.width, destSize.height
+            );
+            break;
+        }
+
+        break;
     }
   }
 
 
-  function toDataURL (mimetype, quality, model) {
+  function toDataURL(mimetype, quality, model) {
     return model.canvas().toDataURL(mimetype, quality);
   }
 
 
-  function getCssString (color) {
-    return "rgba(" + [ color.red, color.green, color.blue, color.alpha ].join(",") + ")";
+  function getCssString(color) {
+    return "rgba(" + [color.red, color.green, color.blue, color.alpha].join(",") + ")";
   }
 
 
@@ -424,7 +424,7 @@ var _elm_canvas$elm_canvas$Native_Canvas = function () {  // eslint-disable-line
         callback(Scheduler.fail({ ctor: "Error" }));
       };
 
-      if (source.slice(0,5) !== "data:") {
+      if (source.slice(0, 5) !== "data:") {
         img.crossOrigin = "Anonymous";
       }
       img.src = source;
@@ -438,7 +438,7 @@ var _elm_canvas$elm_canvas$Native_Canvas = function () {  // eslint-disable-line
     var canvas = model.canvas();
     var ctx = canvas.getContext("2d");
     var imageData = ctx.getImageData(
-      point._0, 
+      point._0,
       point._1,
       size.width,
       size.height
@@ -447,6 +447,48 @@ var _elm_canvas$elm_canvas$Native_Canvas = function () {  // eslint-disable-line
     return _elm_lang$core$Native_List.fromArray(imageData.data);
   }
 
+  function getPopulatedPoints(point, size, model) {
+    LOG("GET IMAGE DATA");
+
+    var canvas = model.canvas();
+    var ctx = canvas.getContext("2d");
+    var imageData = ctx.getImageData(
+      point._0,
+      point._1,
+      size.width,
+      size.height
+    );
+
+    var createPointFromIndex = function (index) {
+      var y = index % size.width;
+      var x = Math.floor(index / size.width);
+
+      return { ctor: "Point", _0: x, _1: y };
+    };
+
+    var result = []
+
+    if (imageData.data.length % 4 != 0) {
+      return _elm_lang$core$Native_List.fromArray(result);
+    }
+
+    for (var i = 0; i < imageData.data.length; i += 4) {
+      var r = imageData.data[i];
+      var g = imageData.data[i + 1];
+      var b = imageData.data[i + 2];
+      var a = imageData.data[i + 3];
+
+      var coords = createPointFromIndex(i / 4);
+
+      if (a !== 0) {
+          //result.push(_elm_lang$core$Native_Utils.Tuple2(coords, { ctor: "Color", _0: r, _1: g, _2: b, _3: a }))
+          result.push(coords);
+      }
+    }
+
+    return _elm_lang$core$Native_List.fromArray(result);
+    //return result;
+  }
 
   function setSize(size, model) {
     var canvas = cloneModel(model).canvas();
@@ -493,7 +535,7 @@ var _elm_canvas$elm_canvas$Native_Canvas = function () {  // eslint-disable-line
     var diffCanvases = old.model.canvas() !== new_.model.canvas();
 
     return {
-      applyPatch: function(domNode, data) {
+      applyPatch: function (domNode, data) {
         LOG("APPLY PATCH");
 
         if (diffCanvases) {
@@ -524,8 +566,9 @@ var _elm_canvas$elm_canvas$Native_Canvas = function () {  // eslint-disable-line
     loadImage: loadImage,
     toHtml: F2(toHtml), // eslint-disable-line no-undef
     getImageData: F3(getImageData), // eslint-disable-line no-undef
+    getPopulatedPoints: F3(getPopulatedPoints), // eslint-disable-line no-undef
     clone: cloneModel,
     batch: F2(batch), // eslint-disable-line no-undef
     toDataURL: F3(toDataURL) // eslint-disable-line no-undef
   };
-}();
+}());

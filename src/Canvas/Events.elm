@@ -26,6 +26,8 @@ import Html.Events exposing (on, onWithOptions, Options)
 import Canvas.Point exposing (Point)
 import Canvas.Point as Point
 import Json.Decode as Json
+import List
+import Dict
 
 
 {-| Just like the `onMouseDown` in `Html.Events`, but this one passes along a `Point` that is relative to the `Canvas`. So clicking right in the middle of a 200x200 `Canvas` will return a `Point.toInts point == ( 100, 100 )`.
@@ -91,7 +93,7 @@ onSingleTouchStart options message =
     onWithOptions "touchstart" options <|
         Json.map
             (positionInCanvas >> message)
-            singleTouchEventPositionDecoder
+            (traceDecoder "onSingleTouchStart" singleTouchEventPositionDecoder)
 
 
 {-| -}
@@ -127,7 +129,7 @@ onMultiTouchStart options message =
     onWithOptions "touchstart" options <|
         Json.map
             (positionsInCanvas >> message)
-            multiTouchEventPositionDecoder
+            (traceDecoder "onMultiTouchStart" multiTouchEventPositionDecoder)
 
 
 {-| -}
@@ -202,12 +204,7 @@ singleTouchEventPositionDecoder =
 multiTouchEventPositionDecoder : Json.Decoder ( List ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) )
 multiTouchEventPositionDecoder =
     Json.map4 (,,,)
-        (Json.field
-            "changedTouches"
-            (Json.list
-                (toTuple [ "clientX" ] [ "clientY" ])
-            )
-        )
+        (Json.at [ "changedTouches" ] touchListDecoder)
         (toTuple [ "target", "offsetLeft" ] [ "target", "offsetTop" ])
         (toTuple [ "view", "document", "body", "scrollLeft" ] [ "view", "document", "body", "scrollTop" ])
         (toTuple [ "view", "document", "documentElement", "scrollLeft" ] [ "view", "document", "documentElement", "scrollTop" ])
@@ -216,3 +213,33 @@ multiTouchEventPositionDecoder =
 toTuple : List String -> List String -> Json.Decoder ( Float, Float )
 toTuple x y =
     Json.map2 (,) (Json.at x Json.float) (Json.at y Json.float)
+
+
+touchListDecoder : Json.Decoder (List ( Float, Float ))
+touchListDecoder =
+    Json.maybe
+        (Json.map2
+            (,)
+            (Json.field "identifier" Json.int)
+            (toTuple [ "clientX" ] [ "clientY" ])
+        )
+        |> Json.dict
+        |> Json.map
+            (Dict.values
+                >> (List.filterMap identity)
+                >> List.map (\( i, ( x, y ) ) -> ( x, y ))
+            )
+
+
+traceDecoder : String -> Json.Decoder msg -> Json.Decoder msg
+traceDecoder message decoder =
+    Json.value
+        |> Json.andThen
+            (\value ->
+                case Json.decodeValue decoder value of
+                    Ok decoded ->
+                        Json.succeed <| Debug.log ("Success: " ++ message) <| decoded
+
+                    Err err ->
+                        Json.fail <| Debug.log ("Fail: " ++ message) <| err
+            )
