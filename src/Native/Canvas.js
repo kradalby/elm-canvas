@@ -460,8 +460,8 @@ var _kradalby$enigma$Native_Canvas = (function () {  // eslint-disable-line no-u
     );
 
     var createPointFromIndex = function (index) {
-      var y = index % size.width;
-      var x = Math.floor(index / size.width);
+      var x = index % size.width;
+      var y = Math.floor(index / size.width);
 
       return { ctor: "Point", _0: x, _1: y };
     };
