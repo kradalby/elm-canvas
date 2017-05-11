@@ -4,235 +4,224 @@
 /* global _elm_lang$virtual_dom$Native_VirtualDom */
 
 var _kradalby$enigma$Native_Canvas = (function () {  // eslint-disable-line no-unused-vars
-
-
-  function LOG(msg) { // eslint-disable-line no-unused-vars
+  function LOG (msg) { // eslint-disable-line no-unused-vars
     // console.log(msg);
   }
 
-
-  function makeModel(canvas) {
-
+  function makeModel (canvas) {
     // The elm debugger crashes when it tries to
     // traverse an html object. So instead
     // of passing along a canvas element, we
     // pass along a function that returns it
-    function getCanvas() {
-      return canvas;
+    function getCanvas () {
+      return canvas
     }
 
     return {
-      ctor: "Canvas",
+      ctor: 'Canvas',
       canvas: getCanvas,
       width: canvas.width,
       height: canvas.height
-    };
+    }
   }
 
   // This is how we ensure immutability.
   // Canvas elements are never modified
   // and passed along. They are copied,
   // and the clone is passed along.
-  function cloneModel(model) {
+  function cloneModel (model) {
+    var canvas = document.createElement('canvas')
+    canvas.width = model.width
+    canvas.height = model.height
 
-    var canvas = document.createElement("canvas");
-    canvas.width = model.width;
-    canvas.height = model.height;
+    var ctx = canvas.getContext('2d')
+    ctx.drawImage(model.canvas(), 0, 0)
 
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(model.canvas(), 0, 0);
-
-    return makeModel(canvas);
-
+    return makeModel(canvas)
   }
 
+  function initialize (size) {
+    var canvas = document.createElement('canvas')
+    canvas.width = size.width
+    canvas.height = size.height
 
-  function initialize(size) {
-
-    var canvas = document.createElement("canvas");
-    canvas.width = size.width;
-    canvas.height = size.height;
-
-    return makeModel(canvas);
-
+    return makeModel(canvas)
   }
 
+  function batch (drawOps, model) {
+    model = cloneModel(model)
 
-  function batch(drawOps, model) {
-    model = cloneModel(model);
+    var ctx = model.canvas().getContext('2d')
 
-    var ctx = model.canvas().getContext("2d");
+    while (drawOps.ctor !== '[]') {
+      handleDrawOp(ctx, drawOps._0)
 
-    while (drawOps.ctor !== "[]") {
-      handleDrawOp(ctx, drawOps._0);
-
-      drawOps = drawOps._1;
+      drawOps = drawOps._1
     }
 
-    return model;
+    return model
   }
 
-
-  function handleDrawOp(ctx, drawOp) {
-    var point, point1, size, color;
+  function handleDrawOp (ctx, drawOp) {
+    var point, point1, size, color
 
     switch (drawOp.ctor) {
-      case "Font":
+      case 'Font':
 
-        ctx.font = drawOp._0;
-        break;
+        ctx.font = drawOp._0
+        break
 
-      case "Arc":
+      case 'Arc':
 
-        point = drawOp._0;
+        point = drawOp._0
 
-        ctx.arc(point._0, point._1, drawOp._1, drawOp._2, drawOp._3);
-        break;
+        ctx.arc(point._0, point._1, drawOp._1, drawOp._2, drawOp._3)
+        break
 
-      case "ArcTo":
+      case 'ArcTo':
 
-        point = drawOp._0;
-        point1 = drawOp._1;
+        point = drawOp._0
+        point1 = drawOp._1
 
-        ctx.arcTo(point._0, point._1, point1._0, point1._1, drawOp._2);
-        break;
+        ctx.arcTo(point._0, point._1, point1._0, point1._1, drawOp._2)
+        break
 
-      case "StrokeText":
+      case 'StrokeText':
 
-        point = drawOp._1;
+        point = drawOp._1
 
-        ctx.strokeText(drawOp._0, point._0, point._1);
-        break;
+        ctx.strokeText(drawOp._0, point._0, point._1)
+        break
 
-      case "FillText":
+      case 'FillText':
 
-        point = drawOp._1;
+        point = drawOp._1
 
-        ctx.fillText(drawOp._0, point._0, point._1);
-        break;
+        ctx.fillText(drawOp._0, point._0, point._1)
+        break
 
-      case "GlobalCompositionOp":
+      case 'GlobalCompositionOp':
 
-        ctx.globalCompositeOperation = drawOp._0;
-        break;
+        ctx.globalCompositeOperation = drawOp._0
+        break
 
-      case "LineCap":
+      case 'LineCap':
 
-        ctx.lineCap = drawOp._0;
-        break;
+        ctx.lineCap = drawOp._0
+        break
 
-      case "LineJoin":
+      case 'LineJoin':
 
-        ctx.lineJoin = drawOp._0;
-        break;
+        ctx.lineJoin = drawOp._0
+        break
 
-      case "GlobalAlpha":
+      case 'GlobalAlpha':
 
-        ctx.globalAlpha = drawOp._0;
-        break;
+        ctx.globalAlpha = drawOp._0
+        break
 
-      case "LineDashOffset":
+      case 'LineDashOffset':
 
-        ctx.lineDashOffset = drawOp._0;
-        break;
+        ctx.lineDashOffset = drawOp._0
+        break
 
-      case "LineWidth":
+      case 'LineWidth':
 
-        ctx.lineWidth = drawOp._0;
-        break;
+        ctx.lineWidth = drawOp._0
+        break
 
-      case "MiterLimit":
+      case 'MiterLimit':
 
-        ctx.miterLimit = drawOp._0;
-        break;
+        ctx.miterLimit = drawOp._0
+        break
 
-      case "LineTo":
+      case 'LineTo':
 
-        point = drawOp._0;
+        point = drawOp._0
 
-        ctx.lineTo(point._0, point._1);
-        break;
+        ctx.lineTo(point._0, point._1)
+        break
 
-      case "MoveTo":
+      case 'MoveTo':
 
-        point = drawOp._0;
+        point = drawOp._0
 
-        ctx.moveTo(point._0, point._1);
-        break;
+        ctx.moveTo(point._0, point._1)
+        break
 
-      case "ShadowBlur":
+      case 'ShadowBlur':
 
-        ctx.shadowBlur = drawOp._0;
-        break;
+        ctx.shadowBlur = drawOp._0
+        break
 
-      case "ShadowColor":
+      case 'ShadowColor':
 
-        color = _elm_lang$core$Color$toRgb(drawOp._0);
+        color = _elm_lang$core$Color$toRgb(drawOp._0)
 
-        ctx.shadowColor = getCssString(color);
-        break;
+        ctx.shadowColor = getCssString(color)
+        break
 
-      case "ShadowOffsetX":
+      case 'ShadowOffsetX':
 
-        ctx.shadowOffsetX = drawOp._0;
-        break;
+        ctx.shadowOffsetX = drawOp._0
+        break
 
-      case "ShadowOffsetY":
+      case 'ShadowOffsetY':
 
-        ctx.shadowOffsetY = drawOp._0;
-        break;
+        ctx.shadowOffsetY = drawOp._0
+        break
 
-      case "Stroke":
+      case 'Stroke':
 
-        ctx.stroke();
-        break;
+        ctx.stroke()
+        break
 
-      case "BeginPath":
+      case 'BeginPath':
 
-        ctx.beginPath();
-        break;
+        ctx.beginPath()
+        break
 
-      case "BezierCurveTo":
+      case 'BezierCurveTo':
 
-        point = drawOp._0;
-        point1 = drawOp._1;
-        var point2 = drawOp._2;
+        point = drawOp._0
+        point1 = drawOp._1
+        var point2 = drawOp._2
 
-        ctx.bezierCurveTo(point._0, point._1, point1._0, point1._1, point2._0, point2._1);
-        break;
+        ctx.bezierCurveTo(point._0, point._1, point1._0, point1._1, point2._0, point2._1)
+        break
 
-      case "QuadraticCurveTo":
+      case 'QuadraticCurveTo':
 
-        point = drawOp._0;
-        point1 = drawOp._1;
+        point = drawOp._0
+        point1 = drawOp._1
 
-        ctx.quadraticCurveTo(point._0, point._1, point1._0, point1._1);
-        break;
+        ctx.quadraticCurveTo(point._0, point._1, point1._0, point1._1)
+        break
 
-      case "Rect":
+      case 'Rect':
 
-        point = drawOp._0;
-        size = drawOp._1;
+        point = drawOp._0
+        size = drawOp._1
 
-        ctx.rect(point._0, point._1, size.width, size.height);
-        break;
+        ctx.rect(point._0, point._1, size.width, size.height)
+        break
 
-      case "Rotate":
+      case 'Rotate':
 
-        ctx.rotate(drawOp._0);
-        break;
+        ctx.rotate(drawOp._0)
+        break
 
-      case "Scale":
+      case 'Scale':
 
-        ctx.scale(drawOp._0, drawOp._1);
-        break;
+        ctx.scale(drawOp._0, drawOp._1)
+        break
 
-      case "SetLineDash":
+      case 'SetLineDash':
 
-        ctx.setLineDash(_elm_lang$core$Native_List.toArray(drawOp._0));
-        break;
+        ctx.setLineDash(_elm_lang$core$Native_List.toArray(drawOp._0))
+        break
 
-      case "SetTransform":
+      case 'SetTransform':
 
         ctx.setTransform(
           drawOp._0,
@@ -241,10 +230,10 @@ var _kradalby$enigma$Native_Canvas = (function () {  // eslint-disable-line no-u
           drawOp._3,
           drawOp._4,
           drawOp._5
-        );
-        break;
+        )
+        break
 
-      case "Transform":
+      case 'Transform':
 
         ctx.transform(
           drawOp._0,
@@ -253,127 +242,127 @@ var _kradalby$enigma$Native_Canvas = (function () {  // eslint-disable-line no-u
           drawOp._3,
           drawOp._4,
           drawOp._5
-        );
-        break;
+        )
+        break
 
-      case "Translate":
+      case 'Translate':
 
-        point = drawOp._0;
-        ctx.translate(point._0, point._1);
-        break;
+        point = drawOp._0
+        ctx.translate(point._0, point._1)
+        break
 
-      case "StrokeRect":
+      case 'StrokeRect':
 
-        point = drawOp._0;
-        size = drawOp._1;
+        point = drawOp._0
+        size = drawOp._1
 
-        ctx.strokeRect(point._0, point._1, size.width, size.height);
-        break;
+        ctx.strokeRect(point._0, point._1, size.width, size.height)
+        break
 
-      case "StrokeStyle":
+      case 'StrokeStyle':
 
-        color = _elm_lang$core$Color$toRgb(drawOp._0);
+        color = _elm_lang$core$Color$toRgb(drawOp._0)
 
-        ctx.strokeStyle = getCssString(color);
-        break;
+        ctx.strokeStyle = getCssString(color)
+        break
 
-      case "TextAlign":
+      case 'TextAlign':
 
-        ctx.textAlign = drawOp._0;
-        break;
+        ctx.textAlign = drawOp._0
+        break
 
-      case "TextBaseline":
+      case 'TextBaseline':
 
-        ctx.textBaseline = drawOp._0;
-        break;
+        ctx.textBaseline = drawOp._0
+        break
 
-      case "FillStyle":
+      case 'FillStyle':
 
-        color = _elm_lang$core$Color$toRgb(drawOp._0);
+        color = _elm_lang$core$Color$toRgb(drawOp._0)
 
-        ctx.fillStyle = getCssString(color);
-        break;
+        ctx.fillStyle = getCssString(color)
+        break
 
-      case "Fill":
+      case 'Fill':
 
-        ctx.fill();
-        break;
+        ctx.fill()
+        break
 
-      case "FillRect":
+      case 'FillRect':
 
-        point = drawOp._0;
-        size = drawOp._1;
+        point = drawOp._0
+        size = drawOp._1
 
-        ctx.fillRect(point._0, point._1, size.width, size.height);
-        break;
+        ctx.fillRect(point._0, point._1, size.width, size.height)
+        break
 
-      case "PutImageData":
+      case 'PutImageData':
 
-        point = drawOp._2;
-        size = drawOp._1;
-        var data = _elm_lang$core$Native_List.toArray(drawOp._0);
+        point = drawOp._2
+        size = drawOp._1
+        var data = _elm_lang$core$Native_List.toArray(drawOp._0)
 
-        var imageData = ctx.createImageData(size.width, size.height);
+        var imageData = ctx.createImageData(size.width, size.height)
 
         for (var index = 0; index < data.length; index++) {
-          imageData.data[index] = data[index];
+          imageData.data[index] = data[index]
         }
 
-        ctx.putImageData(imageData, point._0, point._1);
-        break;
+        ctx.putImageData(imageData, point._0, point._1)
+        break
 
-      case "ClearRect":
+      case 'ClearRect':
 
-        point = drawOp._0;
-        size = drawOp._1;
+        point = drawOp._0
+        size = drawOp._1
 
-        ctx.clearRect(point._0, point._1, size.width, size.height);
-        break;
+        ctx.clearRect(point._0, point._1, size.width, size.height)
+        break
 
-      case "Clip":
+      case 'Clip':
 
-        ctx.clip();
-        break;
+        ctx.clip()
+        break
 
-      case "ClosePath":
+      case 'ClosePath':
 
-        ctx.clearPath();
-        break;
+        ctx.clearPath()
+        break
 
-      case "DrawImage":
+      case 'DrawImage':
 
-        var srcCanvas = drawOp._0.canvas();
-        var drawImageOp = drawOp._1;
-        var srcPoint, srcSize, destPoint, destSize;
+        var srcCanvas = drawOp._0.canvas()
+        var drawImageOp = drawOp._1
+        var srcPoint, srcSize, destPoint, destSize
 
         switch (drawOp._1.ctor) {
-          case "At":
+          case 'At':
 
-            destPoint = drawImageOp._0;
+            destPoint = drawImageOp._0
             ctx.drawImage(
               srcCanvas,
               destPoint._0,
               destPoint._1
-            );
-            break;
+            )
+            break
 
-          case "Scaled":
+          case 'Scaled':
 
-            destPoint = drawImageOp._0;
-            destSize = drawImageOp._1;
+            destPoint = drawImageOp._0
+            destSize = drawImageOp._1
             ctx.drawImage(
               srcCanvas,
               destPoint._0, destPoint._1,
               destSize.width, destSize.height
-            );
-            break;
+            )
+            break
 
-          case "CropScaled":
+          case 'CropScaled':
 
-            srcPoint = drawImageOp._0;
-            srcSize = drawImageOp._1;
-            destPoint = drawImageOp._2;
-            destSize = drawImageOp._3;
+            srcPoint = drawImageOp._0
+            srcSize = drawImageOp._1
+            destPoint = drawImageOp._2
+            destSize = drawImageOp._3
 
             ctx.drawImage(
               srcCanvas,
@@ -381,188 +370,190 @@ var _kradalby$enigma$Native_Canvas = (function () {  // eslint-disable-line no-u
               srcSize.width, srcSize.height,
               destPoint._0, destPoint._1,
               destSize.width, destSize.height
-            );
-            break;
+            )
+            break
         }
 
-        break;
+        break
     }
   }
 
-
-  function toDataURL(mimetype, quality, model) {
-    return model.canvas().toDataURL(mimetype, quality);
+  function toDataURL (mimetype, quality, model) {
+    return model.canvas().toDataURL(mimetype, quality)
   }
 
-
-  function getCssString(color) {
-    return "rgba(" + [color.red, color.green, color.blue, color.alpha].join(",") + ")";
+  function getCssString (color) {
+    return 'rgba(' + [color.red, color.green, color.blue, color.alpha].join(',') + ')'
   }
 
+  function loadImage (source) {
+    LOG('LOAD IMAGE')
 
-  function loadImage(source) {
-    LOG("LOAD IMAGE");
-
-    var Scheduler = _elm_lang$core$Native_Scheduler;
+    var Scheduler = _elm_lang$core$Native_Scheduler
     return Scheduler.nativeBinding(function (callback) {
-      var img = new Image();
+      var img = new Image()
 
       img.onload = function () {
-        var canvas = document.createElement("canvas");
+        var canvas = document.createElement('canvas')
 
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = img.width
+        canvas.height = img.height
 
-        var ctx = canvas.getContext("2d");
+        var ctx = canvas.getContext('2d')
 
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0)
 
-        callback(Scheduler.succeed(makeModel(canvas)));
-      };
+        callback(Scheduler.succeed(makeModel(canvas)))
+      }
 
       img.onerror = function () {
-        callback(Scheduler.fail({ ctor: "Error" }));
-      };
-
-      if (source.slice(0, 5) !== "data:") {
-        img.crossOrigin = "Anonymous";
+        callback(Scheduler.fail({ ctor: 'Error' }))
       }
-      img.src = source;
-    });
+
+      if (source.slice(0, 5) !== 'data:') {
+        img.crossOrigin = 'Anonymous'
+      }
+      img.src = source
+    })
   }
 
+  function getImageData (point, size, model) {
+    LOG('GET IMAGE DATA')
 
-  function getImageData(point, size, model) {
-    LOG("GET IMAGE DATA");
-
-    var canvas = model.canvas();
-    var ctx = canvas.getContext("2d");
+    var canvas = model.canvas()
+    var ctx = canvas.getContext('2d')
     var imageData = ctx.getImageData(
       point._0,
       point._1,
       size.width,
       size.height
-    );
+    )
 
-    return _elm_lang$core$Native_List.fromArray(imageData.data);
+    return _elm_lang$core$Native_List.fromArray(imageData.data)
   }
 
-  function getPopulatedPoints(point, size, model) {
-    LOG("GET IMAGE DATA");
+  function getPopulatedPoints (point, size, model) {
+    LOG('GET IMAGE DATA')
 
-    var canvas = model.canvas();
-    var ctx = canvas.getContext("2d");
+    var canvas = model.canvas()
+    var ctx = canvas.getContext('2d')
     var imageData = ctx.getImageData(
       point._0,
       point._1,
       size.width,
       size.height
-    );
+    )
 
     var createPointFromIndex = function (index) {
-      var x = index % size.width;
-      var y = Math.floor(index / size.width);
+      var x = index % size.width
+      var y = Math.floor(index / size.width)
 
-      return { ctor: "Point", _0: x, _1: y };
-    };
+      return { ctor: 'Point', _0: x, _1: y }
+    }
 
     var result = []
 
     if (imageData.data.length % 4 != 0) {
-      return _elm_lang$core$Native_List.fromArray(result);
+      return _elm_lang$core$Native_List.fromArray(result)
     }
 
     for (var i = 0; i < imageData.data.length; i += 4) {
-      var r = imageData.data[i];
-      var g = imageData.data[i + 1];
-      var b = imageData.data[i + 2];
-      var a = imageData.data[i + 3];
+      var r = imageData.data[i]
+      var g = imageData.data[i + 1]
+      var b = imageData.data[i + 2]
+      var a = imageData.data[i + 3]
 
-      var coords = createPointFromIndex(i / 4);
+      var coords = createPointFromIndex(i / 4)
 
       if (a !== 0) {
-          //result.push(_elm_lang$core$Native_Utils.Tuple2(coords, { ctor: "Color", _0: r, _1: g, _2: b, _3: a }))
-          result.push(coords);
+        // result.push(_elm_lang$core$Native_Utils.Tuple2(coords, { ctor: "Color", _0: r, _1: g, _2: b, _3: a }))
+        result.push(coords)
       }
     }
 
-    return _elm_lang$core$Native_List.fromArray(result);
-    //return result;
+    return _elm_lang$core$Native_List.fromArray(result)
+    // return result;
   }
 
-  function setSize(size, model) {
-    var canvas = cloneModel(model).canvas();
-    canvas.width = size.width;
-    canvas.height = size.height;
+  function setSize (size, model) {
+    var canvas = cloneModel(model).canvas()
+    canvas.width = size.width
+    canvas.height = size.height
 
-    return makeModel(canvas);
+    return makeModel(canvas)
   }
 
-
-  function getSize(model) {
+  function getSize (model) {
     return {
       width: model.width,
       height: model.height
-    };
+    }
   }
 
-
-
-  function toHtml(factList, model) {
-    LOG("TO HTML");
-
-    return _elm_lang$virtual_dom$Native_VirtualDom.custom(factList, model, implementation);
-
+  function getClientSize (model) {
+    return {
+      width: model.clientWidth,
+      height: model.clientHeight
+    }
   }
 
+  function getBoundingClientRect (model) {
+    return {
+      top: model.getBoundingClientRect().top,
+      left: model.getBoundingClientRect().left,
+      right: model.getBoundingClientRect().right,
+      bottom: model.getBoundingClientRect().bottom
+    }
+  }
+
+  function toHtml (factList, model) {
+    LOG('TO HTML')
+
+    return _elm_lang$virtual_dom$Native_VirtualDom.custom(factList, model, implementation)
+  }
 
   var implementation = {
     render: renderCanvas,
     diff: diff
-  };
-
-
-  function renderCanvas(model) {
-    LOG("RENDER CANVAS");
-    return cloneModel(model).canvas();
   }
 
+  function renderCanvas (model) {
+    LOG('RENDER CANVAS')
+    return cloneModel(model).canvas()
+  }
 
-  function diff(old, new_) {
-    LOG("DIFF");
+  function diff (old, new_) {
+    LOG('DIFF')
 
-
-    var diffCanvases = old.model.canvas() !== new_.model.canvas();
+    var diffCanvases = old.model.canvas() !== new_.model.canvas()
 
     return {
       applyPatch: function (domNode, data) {
-        LOG("APPLY PATCH");
+        LOG('APPLY PATCH')
 
         if (diffCanvases) {
+          var model = data.model
 
-          var model = data.model;
+          domNode.width = model.width
+          domNode.height = model.height
 
-          domNode.width = model.width;
-          domNode.height = model.height;
-
-          var ctx = domNode.getContext("2d");
-          ctx.clearRect(0, 0, domNode.width, domNode.height);
-          ctx.drawImage(data.model.canvas(), 0, 0);
+          var ctx = domNode.getContext('2d')
+          ctx.clearRect(0, 0, domNode.width, domNode.height)
+          ctx.drawImage(data.model.canvas(), 0, 0)
         }
 
-        return domNode;
-
+        return domNode
       },
       data: new_
-    };
-
+    }
   }
-
 
   return {
     initialize: initialize,
     setSize: F2(setSize), // eslint-disable-line no-undef
     getSize: getSize,
+    getClientSize: getClientSize,
+    getBoundingClientRect: getBoundingClientRect,
     loadImage: loadImage,
     toHtml: F2(toHtml), // eslint-disable-line no-undef
     getImageData: F3(getImageData), // eslint-disable-line no-undef
@@ -570,5 +561,5 @@ var _kradalby$enigma$Native_Canvas = (function () {  // eslint-disable-line no-u
     clone: cloneModel,
     batch: F2(batch), // eslint-disable-line no-undef
     toDataURL: F3(toDataURL) // eslint-disable-line no-undef
-  };
-}());
+  }
+}())

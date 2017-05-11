@@ -13,6 +13,7 @@ module Canvas.Events
         , onMultiTouchEnd
         , onMultiTouchCancel
         , onMultiTouchMove
+        , Touch
         )
 
 {-| These functions are just like the `Html.Events` functions `onMouseDown`, `onMouseUp`, etc, except that they pass along a `Point`, representing exactly where on the canvas the mouse activity occured. They can be used on other elements too, like divs.
@@ -124,39 +125,55 @@ onSingleTouchMove options message =
 
 
 {-| -}
-onMultiTouchStart : Options -> (List Point -> msg) -> Attribute msg
+onMultiTouchStart : Options -> ({ targetTouches : List Touch, points : List Point } -> msg) -> Attribute msg
 onMultiTouchStart options message =
     onWithOptions "touchstart" options <|
         Json.map
-            (positionsInCanvas >> message)
-            (traceDecoder "onMultiTouchStart" multiTouchEventPositionDecoder)
+            (herpderp >> message)
+            multiTouchEventPositionDecoder
+
+
+
+-- (traceDecoder "onMultiTouchStart" multiTouchEventPositionDecoder)
 
 
 {-| -}
-onMultiTouchEnd : Options -> (List Point -> msg) -> Attribute msg
+onMultiTouchEnd : Options -> ({ targetTouches : List Touch, points : List Point } -> msg) -> Attribute msg
 onMultiTouchEnd options message =
     onWithOptions "touchend" options <|
         Json.map
-            (positionsInCanvas >> message)
+            (herpderp >> message)
             multiTouchEventPositionDecoder
 
 
+
+-- (traceDecoder "onMultiTouchEnd" multiTouchEventPositionDecoder)
+
+
 {-| -}
-onMultiTouchCancel : Options -> (List Point -> msg) -> Attribute msg
+onMultiTouchCancel : Options -> ({ targetTouches : List Touch, points : List Point } -> msg) -> Attribute msg
 onMultiTouchCancel options message =
     onWithOptions "touchcancel" options <|
         Json.map
-            (positionsInCanvas >> message)
+            (herpderp >> message)
             multiTouchEventPositionDecoder
+
+
+
+-- (traceDecoder "onMultiTouchEnd" multiTouchEventPositionDecoder)
 
 
 {-| -}
-onMultiTouchMove : Options -> (List Point -> msg) -> Attribute msg
+onMultiTouchMove : Options -> ({ targetTouches : List Touch, points : List Point } -> msg) -> Attribute msg
 onMultiTouchMove options message =
     onWithOptions "touchmove" options <|
         Json.map
-            (positionsInCanvas >> message)
+            (herpderp >> message)
             multiTouchEventPositionDecoder
+
+
+
+-- (traceDecoder "onMultiTouchMove" multiTouchEventPositionDecoder)
 
 
 positionInCanvas : ( ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) ) -> Point
@@ -177,9 +194,18 @@ positionInCanvas ( client, offset, body, documentElement ) =
         Point.fromFloats ( (cx + bx + dx) - ox, (cy + by + dy) - oy )
 
 
-positionsInCanvas : ( List ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) ) -> List Point
-positionsInCanvas ( clients, offset, body, documentElement ) =
-    List.map (\client -> positionInCanvas ( client, offset, body, documentElement )) clients
+positionsInCanvas : ( List Touch, ( Float, Float ), ( Float, Float ), ( Float, Float ) ) -> List Point
+positionsInCanvas ( changedTouches, offset, body, documentElement ) =
+    List.map (\touch -> positionInCanvas ( ( touch.client.x, touch.client.y ), offset, body, documentElement )) changedTouches
+
+
+herpderp : ( List Touch, List Touch, List Touch, ( Float, Float ), ( Float, Float ), ( Float, Float ) ) -> { targetTouches : List Touch, points : List Point }
+herpderp ( touches, targetTouches, changedTouches, offset, body, documentElement ) =
+    let
+        positions =
+            positionsInCanvas ( changedTouches, offset, body, documentElement )
+    in
+        { targetTouches = targetTouches, points = positions }
 
 
 mouseEventPositionDecoder : Json.Decoder ( ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) )
@@ -201,9 +227,29 @@ singleTouchEventPositionDecoder =
         (toTuple [ "view", "document", "documentElement", "scrollLeft" ] [ "view", "document", "documentElement", "scrollTop" ])
 
 
-multiTouchEventPositionDecoder : Json.Decoder ( List ( Float, Float ), ( Float, Float ), ( Float, Float ), ( Float, Float ) )
+type alias PageCoord =
+    { x : Float
+    , y : Float
+    }
+
+
+type alias ClientCoord =
+    { x : Float
+    , y : Float
+    }
+
+
+type alias Touch =
+    { page : PageCoord
+    , client : ClientCoord
+    }
+
+
+multiTouchEventPositionDecoder : Json.Decoder ( List Touch, List Touch, List Touch, ( Float, Float ), ( Float, Float ), ( Float, Float ) )
 multiTouchEventPositionDecoder =
-    Json.map4 (,,,)
+    Json.map6 (,,,,,)
+        (Json.at [ "touches" ] touchListDecoder)
+        (Json.at [ "targetTouches" ] touchListDecoder)
         (Json.at [ "changedTouches" ] touchListDecoder)
         (toTuple [ "target", "offsetLeft" ] [ "target", "offsetTop" ])
         (toTuple [ "view", "document", "body", "scrollLeft" ] [ "view", "document", "body", "scrollTop" ])
@@ -215,19 +261,20 @@ toTuple x y =
     Json.map2 (,) (Json.at x Json.float) (Json.at y Json.float)
 
 
-touchListDecoder : Json.Decoder (List ( Float, Float ))
+touchListDecoder : Json.Decoder (List Touch)
 touchListDecoder =
     Json.maybe
-        (Json.map2
-            (,)
+        (Json.map3
+            (,,)
             (Json.field "identifier" Json.int)
             (toTuple [ "clientX" ] [ "clientY" ])
+            (toTuple [ "pageX" ] [ "pageY" ])
         )
         |> Json.dict
         |> Json.map
             (Dict.values
                 >> (List.filterMap identity)
-                >> List.map (\( i, ( x, y ) ) -> ( x, y ))
+                >> List.map (\( i, ( clientX, clientY ), ( pageX, pageY ) ) -> { client = { x = clientX, y = clientY }, page = { x = pageX, y = pageY } })
             )
 
 

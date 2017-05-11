@@ -12,6 +12,8 @@ module Canvas
         , getImageData
         , getPopulatedPoints
         , getSize
+        , getClientSize
+        , getBoundingClientRect
         , setSize
         , toDataUrl
         )
@@ -224,6 +226,20 @@ getPopulatedPoints =
 getSize : Canvas -> Size
 getSize =
     Native.Canvas.getSize
+
+
+{-| Get the Client `Size` of a `Canvas`.
+-}
+getClientSize : Canvas -> Size
+getClientSize =
+    Native.Canvas.getClientSize
+
+
+{-| Get the getBoundingClientRect of a `Canvas`.
+-}
+getBoundingClientRect : Canvas -> { top : Float, left : Float, right : Float, bottom : Float }
+getBoundingClientRect =
+    Native.Canvas.getBoundingClientRect
 
 
 {-| Set the `Size` of a `Canvas`
